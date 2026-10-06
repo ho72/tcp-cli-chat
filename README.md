@@ -29,7 +29,7 @@ flowchart LR
 ## 코드 구성
 
 ```text
-TCP-CLI-Chat/
+tcp-cli-chat/
 ├── server/
 │   ├── chat_server.py   # 로그인·세션·브로드캐스트
 │   ├── start.sh         # 백그라운드 서버 시작
@@ -46,8 +46,8 @@ TCP-CLI-Chat/
 ## 실행하기
 
 ```bash
-git clone https://github.com/ho72/TCP-CLI-Chat.git
-cd TCP-CLI-Chat
+git clone https://github.com/ho72/tcp-cli-chat.git
+cd tcp-cli-chat
 ```
 
 서버는 `CHAT_USERS_JSON`에서 로그인 계정을 읽습니다. [실행 안내의 가려진 입력 방법](docs/SETUP.md)을 사용하면 실제 값을 소스·셸 기록에 넣지 않고 서버를 시작할 수 있습니다. 계정 설정이 없으면 서버는 시작하지 않습니다.

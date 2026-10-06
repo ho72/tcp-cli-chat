@@ -7,8 +7,8 @@
 Python 3만 있으면 서버와 클라이언트를 실행할 수 있습니다. 외부 패키지 설치는 필요하지 않습니다. 시작·중지 스크립트는 Bash와 `nohup`, `ps`를 사용하는 macOS/Linux 환경용입니다.
 
 ```bash
-git clone https://github.com/ho72/TCP-CLI-Chat.git
-cd TCP-CLI-Chat
+git clone https://github.com/ho72/tcp-cli-chat.git
+cd tcp-cli-chat
 ```
 
 ## 터미널 1 — 서버
