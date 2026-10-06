@@ -1,5 +1,6 @@
 # chat_client.py
 import socket
+import os
 import threading
 import sys
 import getpass  # 비밀번호 입력을 가려주는 기본 모듈
@@ -17,9 +18,9 @@ def receive(sock):
             print("\n[알림] 서버와 연결이 끊어졌습니다.")
             break
 
-# GCP 인스턴스의 '외부 IP 주소' 입력
-SERVER_IP = '34.10.148.139'
-PORT = 5000
+# 로컬 접속이 기본이며 환경변수로 서버 주소와 포트를 지정합니다.
+SERVER_IP = os.getenv("CHAT_SERVER_HOST", "127.0.0.1")
+PORT = int(os.getenv("CHAT_PORT", "5000"))
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:

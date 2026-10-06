@@ -1,14 +1,32 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "채팅 서버 종료 시도 중..."
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+pid_file="$script_dir/.chat_server.pid"
+server_file="$script_dir/chat_server.py"
 
-# 실행 중인 프로세스가 있는지 확인
-if pgrep -f "python3 chat_server.py" > /dev/null
-then
-    # 켜져 있다면 종료
-    pkill -f "python3 chat_server.py"
-    echo "서버가 정상적으로 종료되었습니다."
-else
-    # 켜져 있지 않다면 알림
-    echo "현재 실행 중인 채팅 서버가 없습니다."
+if [[ ! -f "$pid_file" ]]; then
+    echo "시작 스크립트로 실행한 서버가 없습니다."
+    exit 0
 fi
+
+server_pid="$(cat "$pid_file")"
+if [[ ! "$server_pid" =~ ^[0-9]+$ ]]; then
+    echo "PID 파일 형식이 올바르지 않습니다." >&2
+    exit 1
+fi
+if ! kill -0 "$server_pid" 2>/dev/null; then
+    rm -f "$pid_file"
+    echo "서버가 이미 종료되어 있습니다."
+    exit 0
+fi
+
+server_command="$(ps -p "$server_pid" -o args= 2>/dev/null || true)"
+if [[ "$server_command" != *"$server_file"* ]]; then
+    echo "PID가 이 서버를 가리키지 않아 중지하지 않았습니다." >&2
+    exit 1
+fi
+
+kill "$server_pid"
+rm -f "$pid_file"
+echo "채팅 서버에 종료 요청을 보냈습니다."

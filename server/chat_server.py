@@ -1,12 +1,25 @@
 # chat_server.py
 import socket
+import os
+import json
 import threading
 
-# 접속을 허용할 ID와 비밀번호 지정
-VALID_USERS = {
-    "roro": "1234",
-    "friend": "1234"
-}
+# 접속 계정은 실행 환경에서 설정합니다.
+def load_users():
+    """실행 환경에서 계정 설정을 읽고 실제 값은 로그에 출력하지 않습니다."""
+    try:
+        users = json.loads(os.getenv("CHAT_USERS_JSON", "{}"))
+    except json.JSONDecodeError:
+        raise SystemExit("CHAT_USERS_JSON은 ID와 비밀번호를 담은 JSON 객체여야 합니다.")
+    if not isinstance(users, dict) or not users or not all(
+        isinstance(name, str) and name and isinstance(password, str) and password
+        for name, password in users.items()
+    ):
+        raise SystemExit("CHAT_USERS_JSON에 비어 있지 않은 ID와 비밀번호를 설정하세요.")
+    return users
+
+
+VALID_USERS = load_users()
 
 clients = {} # {socket 객체: "유저ID"} 형태로 관리
 
@@ -95,7 +108,9 @@ def handle_client(client_socket, addr):
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server.bind(("0.0.0.0", 5000)) # GCP에서 연 방화벽 포트
+SERVER_HOST = os.getenv("CHAT_BIND_HOST", "127.0.0.1")
+SERVER_PORT = int(os.getenv("CHAT_PORT", "5000"))
+server.bind((SERVER_HOST, SERVER_PORT))
 server.listen(2)
 print("[서버 시작] 클라이언트 기다리는 중...")
 
